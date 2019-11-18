@@ -1,8 +1,11 @@
-package ProgrammingToolkit.java.lib.utils;
+package javaToolkit.lib.utils;
 
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class JSONUtil {
 
@@ -13,7 +16,7 @@ public class JSONUtil {
 			reader = new FileReader(jsonFpath);
 			JSONParser jsonParser = new JSONParser();
 
-			object = (JSONObject)jsonParser.parse(reader);
+			object = (JSONObject) jsonParser.parse(reader);
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

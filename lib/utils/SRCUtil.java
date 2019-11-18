@@ -1,8 +1,8 @@
-package ProgrammingToolkit.java.lib.utils;
+package javaToolkit.lib.utils;
 
 import java.util.List;
 
-import ProgrammingToolkit.java.lib.utils.FileUtil;
+import javaToolkit.lib.utils.FileUtil;
 
 public class SRCUtil {
 

@@ -1,4 +1,4 @@
-package ProgrammingToolkit.java.lib.utils;
+package javaToolkit.lib.utils;
 import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

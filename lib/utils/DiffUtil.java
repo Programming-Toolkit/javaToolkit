@@ -1,4 +1,4 @@
-package ProgrammingToolkit.java.lib.utils;
+package javaToolkit.lib.utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import ProgrammingToolkit.java.lib.utils.FileUtil;
+import javaToolkit.lib.utils.FileUtil;
 import io.reflectoring.diffparser.api.DiffParser;
 import io.reflectoring.diffparser.api.UnifiedDiffParser;
 import io.reflectoring.diffparser.api.model.Diff;

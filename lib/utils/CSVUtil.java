@@ -1,4 +1,4 @@
-package ProgrammingToolkit.java.lib.utils;
+package javaToolkit.lib.utils;
 
 public class CSVUtil {
 

@@ -1,4 +1,4 @@
-package ProgrammingToolkit.java.lib.utils;
+package javaToolkit.lib.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -121,7 +121,7 @@ public class FileUtil {
 				String content = stringBuilder.toString();
 				return content;
 			} else {
-				System.out.printf("File not found! %s\n",filePath);
+				System.out.printf("File not found! %s\n", filePath);
 			}
 		} catch (Exception e) {
 			System.out.println("Read file error!");
@@ -163,6 +163,59 @@ public class FileUtil {
 			dir.mkdirs();
 		} else if (!dir.exists()) {
 			dir.mkdirs();
+		}
+	}
+
+	public static boolean deleteDirectory(File directoryToBeDeleted) {
+		File[] allContents = directoryToBeDeleted.listFiles();
+		if (allContents != null) {
+			for (File file : allContents) {
+				deleteDirectory(file);
+			}
+		}
+		return directoryToBeDeleted.delete();
+	}
+
+	public static List<String> findFilePathofSpecifcTypeRecusive(String tarDir, String extension) {
+
+		List<String> pathList = new ArrayList<String>();
+		try {
+			Files.walk(Paths.get(tarDir)).filter(Files::isRegularFile).forEach((f) -> {
+				String filepath = f.toString();
+				if (filepath.endsWith(extension))
+//					System.out.println(file + " found!");
+					pathList.add(filepath);
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pathList;
+	}
+
+	public static List<String> findRelativeFilePathofSpecifcTypeRecusive(String tarDir, String extension) {
+
+		List<String> relPathList = new ArrayList<String>();
+		try {
+			Files.walk(Paths.get(tarDir)).filter(Files::isRegularFile).forEach((f) -> {
+				String filepath = f.toString();
+				if (filepath.endsWith(extension))
+//					System.out.println(file + " found!");
+					relPathList.add(filepath.replace(tarDir, ""));
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return relPathList;
+	}
+
+	public static void main(String[] args) {
+		// test
+		String dirPath = "/data/bowen/data/Transformation4J/FBMining/_4_fix_groups/RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE/correct the null check object/18601/buggy/";
+		String extension = ".java";
+		for (String filePath : findRelativeFilePathofSpecifcTypeRecusive(dirPath, extension)) {
+			System.out.print(filePath);
 		}
 	}
 
