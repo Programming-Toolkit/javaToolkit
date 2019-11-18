@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javaToolkit.lib.utils.FileUtil;
-import io.reflectoring.diffparser.api.DiffParser;
-import io.reflectoring.diffparser.api.UnifiedDiffParser;
-import io.reflectoring.diffparser.api.model.Diff;
 
 public class DiffUtil {
 
