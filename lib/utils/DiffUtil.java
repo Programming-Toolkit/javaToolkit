@@ -1,12 +1,7 @@
 package javaToolkit.lib.utils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javaToolkit.lib.utils.FileUtil;
 
 public class DiffUtil {
 

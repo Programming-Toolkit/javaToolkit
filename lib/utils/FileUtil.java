@@ -77,6 +77,16 @@ public class FileUtil {
 		}
 	}
 
+	public static void copyFolder(String srcDirStr, String destDirStr) {
+		File source = new File(srcDirStr);
+		File dest = new File(destDirStr);
+		try {
+			FileUtils.copyDirectory(source, dest);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void writeStringToFile(String filePath, String dataStr) {
 		BufferedWriter bufferedWriter = null;
 		try {
