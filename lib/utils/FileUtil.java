@@ -21,6 +21,20 @@ import org.apache.commons.io.FileUtils;
 
 public class FileUtil {
 
+	public static String getFileContent(String filePath) throws IOException {
+
+		BufferedReader br=new BufferedReader(new FileReader(filePath));
+		StringBuilder sb=new StringBuilder();
+		String line=br.readLine();
+		while(line!=null){
+			sb.append(line);
+			sb.append(System.lineSeparator());
+			line=br.readLine();
+		}
+		return sb.toString();
+
+	}
+
 	public static String[] getSubDirs(String rootDir) {
 
 		File file = new File(rootDir);

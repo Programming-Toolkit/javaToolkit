@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 public class JSONUtil {
 
 	public static JSONObject parseJSONFromFile(String jsonFpath) {
-		FileReader reader = null;
+		FileReader reader;
 		JSONObject object = null;
 		try {
 			reader = new FileReader(jsonFpath);
