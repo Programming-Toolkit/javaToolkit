@@ -5,7 +5,7 @@ import java.util.List;
 
 public class DiffUtil {
 
-    public static List<Integer> getChangedLineNumList(String diffFilePath) {
+    public static List<Integer> getChangedLineNumListInOldVersion(String diffFilePath) {
 
         List<Integer> changedLineNumList = new ArrayList<>();
         try {
@@ -14,6 +14,32 @@ public class DiffUtil {
                 if (line.startsWith("@@")) {
                     for (String tmp : line.split(" ")) {
                         if (tmp.trim().startsWith("-")) {
+                            if (tmp.contains(",")) {
+                                changedLineNumList.add(Integer.valueOf(tmp.trim().replace("-", "").split(",")[0]));
+                            } else {
+                                changedLineNumList.add(Integer.valueOf(tmp.trim().replace("-", "")));
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println(diffFilePath);
+            System.exit(0);
+        }
+        return changedLineNumList;
+    }
+
+    public static List<Integer> getChangedLineNumListInNewVersion(String diffFilePath) {
+
+        List<Integer> changedLineNumList = new ArrayList<>();
+        try {
+            List<String> diffFileStrList = FileUtil.readFileToStrList(diffFilePath);
+            for (String line : diffFileStrList) {
+                if (line.startsWith("@@")) {
+                    for (String tmp : line.split(" ")) {
+                        if (tmp.trim().startsWith("+")) {
                             if (tmp.contains(",")) {
                                 changedLineNumList.add(Integer.valueOf(tmp.trim().replace("-", "").split(",")[0]));
                             } else {
