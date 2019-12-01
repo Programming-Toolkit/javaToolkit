@@ -2,8 +2,6 @@ package javaToolkit.lib.utils;
 
 import java.util.List;
 
-import javaToolkit.lib.utils.FileUtil;
-
 public class SRCUtil {
 
 	public static void changePackage(String oriSRCPath, String dstSRCPath, String newPackName) {
