@@ -45,6 +45,19 @@ public class FileUtil {
 
 	}
 
+	public static boolean renameDir(String dirPath, String newDirName) {
+
+		File dir = new File(dirPath);
+		if (!dir.isDirectory()) {
+			System.err.println("There is no directory @ given path");
+			return false;
+		} else {
+			File newDir = new File(dir.getParent() + "/" + newDirName);
+			dir.renameTo(newDir);
+		}
+		return true;
+	}
+
 	public static Boolean writeStr2File(String wStr, String fPath) {
 		try {
 			Files.write(Paths.get(fPath), wStr.getBytes());

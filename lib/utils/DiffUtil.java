@@ -36,7 +36,7 @@ public class DiffUtil {
 
 	public static List<String> getModifiedFileList(String diffFilePath) {
 		/**
-		 * can to be further improved in future
+		 * can to be further improved in future by using diff parser
 		 */
 		List<String> modifiedFileRelPathList = new ArrayList<String>();
 		for (String line : FileUtil.readFileToStrList(diffFilePath)) {
