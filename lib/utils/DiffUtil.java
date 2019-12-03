@@ -9,7 +9,7 @@ public class DiffUtil {
 
         List<Integer> changedLineNumList = new ArrayList<>();
         try {
-            List<String> diffFileStrList = FileUtil.readFileToStrList(diffFilePath);
+            List<String> diffFileStrList = FileUtil.readFileToLineList(diffFilePath);
             for (String line : diffFileStrList) {
                 if (line.startsWith("@@")) {
                     for (String tmp : line.split(" ")) {
@@ -35,7 +35,7 @@ public class DiffUtil {
 
         List<Integer> changedLineNumList = new ArrayList<>();
         try {
-            List<String> diffFileStrList = FileUtil.readFileToStrList(diffFilePath);
+            List<String> diffFileStrList = FileUtil.readFileToLineList(diffFilePath);
             for (String line : diffFileStrList) {
                 if (line.startsWith("@@")) {
                     for (String tmp : line.split(" ")) {
@@ -62,7 +62,7 @@ public class DiffUtil {
          * can to be further improved in future
          */
         List<String> modifiedFileRelPathList = new ArrayList<String>();
-        for (String line : FileUtil.readFileToStrList(diffFilePath)) {
+        for (String line : FileUtil.readFileToLineList(diffFilePath)) {
             if (line.startsWith("diff --git ")) {
                 // Heuristic
                 String fileRelPath = line.replace("diff --git ", "").split(" ")[0].replaceFirst("a/", "").trim();

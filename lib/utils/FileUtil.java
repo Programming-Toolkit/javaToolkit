@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +31,13 @@ public class FileUtil {
             line = br.readLine();
         }
         return sb.toString();
-
     }
 
+
+    /**
+     * use new File(PathString).listfiles(File::isDirectory) instead
+     */
+    @Deprecated
     public static String[] getSubDirs(String rootDir) {
 
         File file = new File(rootDir);
@@ -53,17 +56,43 @@ public class FileUtil {
         try {
             content = new String(Files.readAllBytes(Paths.get(fpath)));
         } catch (IOException e) {
-            System.out.printf("%f not found!", fpath);
+            System.out.printf("%s not found!", fpath);
             e.printStackTrace();
             System.exit(0);
         }
         return content;
-
     }
 
     public static Boolean writeStr2File(String wStr, String fPath) {
         try {
             Files.write(Paths.get(fPath), wStr.getBytes());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static Boolean copyFile2Dir(File f, String DestDir) {
+        try {
+            File DestDirFile = new File(DestDir);
+            if (!DestDirFile.exists()) {
+                DestDirFile.mkdirs();
+            }
+            String targetFilePath = DestDirFile.getAbsoluteFile() + "/" + f.getName();
+            FileUtils.copyFile(f, new File(targetFilePath));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static Boolean copyFile2File(File srcFile, File dstFile) {
+        try {
+            FileUtils.copyFile(srcFile, dstFile);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -81,16 +110,6 @@ public class FileUtil {
             }
         }
         return directoryToBeDeleted.delete();
-    }
-
-    public static void copyFolder(Path srcDirStr, Path destDirStr) {
-        File source = new File(srcDirStr.toString());
-        File dest = new File(destDirStr.toString());
-        try {
-            FileUtils.copyDirectory(source, dest);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void copyFolder(String srcDirStr, String destDirStr) {
@@ -156,7 +175,13 @@ public class FileUtil {
         return null;
     }
 
-    public static List<String> readFileToStrList(String filePath) {
+    /**
+     * there is no \newline at the end of each line
+     *
+     * @param filePath
+     * @return
+     */
+    public static List<String> readFileToLineList(String filePath) {
         ArrayList<String> strList = new ArrayList<String>();
         try {
             if (!new File(filePath).exists()) {
@@ -202,21 +227,21 @@ public class FileUtil {
         return directoryToBeDeleted.delete();
     }
 
-    public static List<String> findFilePathofSpecifcTypeRecusive(String tarDir, String extension) {
+    public static List<File> findFilePathofSpecifcTypeRecusive(String tarDir, String extension) {
 
-        List<String> pathList = new ArrayList<String>();
+        List<File> fileList = new ArrayList<File>();
         try {
             Files.walk(Paths.get(tarDir)).filter(Files::isRegularFile).forEach((f) -> {
                 String filepath = f.toString();
                 if (filepath.endsWith(extension))
 //					System.out.println(file + " found!");
-                    pathList.add(filepath);
+                    fileList.add(new File(filepath));
             });
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return pathList;
+        return fileList;
     }
 
     public static List<String> findRelativeFilePathofSpecifcTypeRecusive(String tarDir, String extension) {

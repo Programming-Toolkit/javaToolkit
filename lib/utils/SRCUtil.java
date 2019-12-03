@@ -5,7 +5,7 @@ import java.util.List;
 public class SRCUtil {
 
 	public static void changePackage(String oriSRCPath, String dstSRCPath, String newPackName) {
-		List<String> srcStrList = FileUtil.readFileToStrList(oriSRCPath);
+		List<String> srcStrList = FileUtil.readFileToLineList(oriSRCPath);
 
 		Boolean ifchanged = false;
 		String wrtStr = "";
