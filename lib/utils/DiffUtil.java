@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiffUtil {
-
+	
+	
     public static List<Integer> getChangedLineNumListInOldVersion(String diffFilePath) {
 
         List<Integer> changedLineNumList = new ArrayList<>();

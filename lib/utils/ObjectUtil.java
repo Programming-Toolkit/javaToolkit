@@ -1,5 +1,9 @@
 package javaToolkit.lib.utils;
+
 import java.io.ObjectOutputStream;
+
+import com.google.gson.Gson;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -21,6 +25,20 @@ public class ObjectUtil {
 			objectOut.writeObject(serObj);
 			objectOut.close();
 			System.out.println("The Object  was succesfully written to a file");
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void WriteObjectToJsonFile(Object serObj, String filepath) {
+
+		try {
+
+			Gson gson = new Gson();
+			String json = gson.toJson(serObj);
+			FileUtil.writeStr2File(json, filepath);
+			System.out.println("The Object  was succesfully written to a json file");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
