@@ -30,6 +30,7 @@ public class FileUtil {
             sb.append(System.lineSeparator());
             line = br.readLine();
         }
+        br.close();
         return sb.toString();
     }
 
