@@ -21,13 +21,13 @@ public class GitUtil {
 		}
 	}
 
-	public static List<String> getAllCommits(Path repoDir) {
+	public static List<String> getAllCommitsSha(Path repoDir) {
 
 		String cmd = "timeout 600 git log --pretty=format:\"%H\"";
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir);
 		if (pr.exitCode == 0) {
-			return Arrays.asList(pr.out.split("\n"));
+			return Arrays.asList(pr.out.replace("\"", "").split("\n"));
 		} else {
 			System.out.println("cmd " + cmd + "\n");
 			System.out.println("report \n" + pr.toString());
@@ -37,7 +37,7 @@ public class GitUtil {
 
 	public static String getCommitMsg(Path repoDir, String com) {
 
-		String cmd = "git log --format=%%B -n 1 " + com;
+		String cmd = "git log --format=%B -n 1 " + com;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir);
 		if (pr.exitCode == 0) {
@@ -48,10 +48,53 @@ public class GitUtil {
 			return null;
 		}
 	}
-	
+
+	public static String getParentCommit(Path repoDir, String com) {
+
+		String cmd = "git log --pretty=%P -n 1 " + com;
+
+		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir);
+		if (pr.exitCode == 0) {
+			return pr.out.replace("\"", "").trim();
+		} else {
+			System.out.println("cmd " + cmd + "\n");
+			System.out.println("report \n" + pr.toString());
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param repoDir
+	 * @param oldCom
+	 * @param newCom
+	 * @param diffMode
+	 * @return
+	 */
+	public static String getDiffBetween2Commits(Path repoDir, String oldCom, String newCom, String diffMode) {
+
+		String cmd = null;
+		if (diffMode != null) {
+			cmd = "git --git-dir " + repoDir.toString() + " /.git --work-tree " + repoDir.toString() + " diff "
+					+ diffMode + " --unified=0 " + oldCom + " " + newCom;
+		} else {
+			cmd = "git --git-dir " + repoDir.toString() + " /.git --work-tree " + repoDir.toString()
+					+ " diff --unified=0 " + oldCom + " " + newCom;
+		}
+
+		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir);
+		if (pr.exitCode == 0) {
+			return pr.out.trim();
+		} else {
+			System.out.println("cmd " + cmd + "\n");
+			System.out.println("report \n" + pr.toString());
+			return null;
+		}
+	}
+
 	public static List<String> getChangedFileList(Path repoDir, String com) {
 
-		String  cmd = "git diff-tree --no-commit-id --name-only -r "+ com;
+		String cmd = "git diff-tree --no-commit-id --name-only -r " + com;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir);
 		if (pr.exitCode == 0) {
@@ -62,36 +105,37 @@ public class GitUtil {
 			return null;
 		}
 	}
-	
-	public static Boolean checkout(Path repoDir, String com,Boolean ifForce) {
-		
-		
+
+	public static Boolean checkout(Path repoDir, String com, Boolean ifForce) {
+
 		ProcessUtil.ProcessReporter pr = new ProcessUtil.ProcessReporter();
-		
-		if(ifForce){
-			String resetCMD="git reset --hard";
-			pr=ProcessUtil.executeCMD(resetCMD, null, repoDir);
+
+		if (ifForce) {
+			String resetCMD = "git reset --hard";
+			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir);
 		}
-		
-		String checkoutCMD=null;
-		if(com==null){ // checkout latest if null
-			checkoutCMD="git --git-dir "+repoDir.toString()+" /.git --work-tree "+repoDir.toString()+" checkout master";
-		}else{
-			checkoutCMD="git --git-dir "+repoDir.toString()+" /.git --work-tree "+repoDir.toString()+" checkout "+com;
+
+		String checkoutCMD = null;
+		if (com == null) { // checkout latest if null
+			checkoutCMD = "git checkout master";
+		} else {
+			checkoutCMD = "git checkout " + com;
 		}
-		pr=ProcessUtil.executeCMD(checkoutCMD, null, repoDir);
-		
+		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir);
+
 		if (pr.exitCode == 0) {
 			return true;
 		} else {
-			String cleanCMD="git --git-dir "+repoDir.toString()+" /.git --work-tree "+repoDir.toString()+" clean -dfx .";
-			pr=ProcessUtil.executeCMD(cleanCMD, null, repoDir);
-			String resetCMD = "git --git-dir "+repoDir.toString()+ " /.git --work-tree "+repoDir.toString()+" reset --hard";
-			pr=ProcessUtil.executeCMD(resetCMD, null, repoDir);
-			pr=ProcessUtil.executeCMD(checkoutCMD, null, repoDir);
-			if(pr.exitCode==0){
+			String cleanCMD = "git --git-dir " + repoDir.toString() + " /.git --work-tree " + repoDir.toString()
+					+ " clean -dfx .";
+			pr = ProcessUtil.executeCMD(cleanCMD, null, repoDir);
+			String resetCMD = "git --git-dir " + repoDir.toString() + " /.git --work-tree " + repoDir.toString()
+					+ " reset --hard";
+			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir);
+			pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir);
+			if (pr.exitCode == 0) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}

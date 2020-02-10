@@ -56,7 +56,7 @@ public class ProcessUtil {
 				// System.out.println(s);
 				out += (s + "\n");
 			}
-			pr.out = out;
+			pr.out = out.trim();
 
 			// Read any errors from the attempted command
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
@@ -67,7 +67,7 @@ public class ProcessUtil {
 				// System.out.println(s);
 				err += (s + "\n");
 			}
-			pr.err = err;
+			pr.err = err.trim();
 
 			proc.destroy();
 
