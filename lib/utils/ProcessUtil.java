@@ -32,6 +32,7 @@ public class ProcessUtil {
 
 	/**
 	 * execute cmd
+	 * 
 	 * @param cmd
 	 * @param envp
 	 * @param workDir
@@ -75,7 +76,7 @@ public class ProcessUtil {
 				throw new Exception();
 			}
 		} catch (Exception e) {
-			pr.toString();
+			TimeUtil.printCurTimewithMsg(pr.toString());
 			e.printStackTrace();
 		}
 

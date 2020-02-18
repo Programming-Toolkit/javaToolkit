@@ -84,6 +84,23 @@ public class FileUtil {
 		return true;
 	}
 
+	public static Boolean writeStrList2File(List<String> strList, Path fPath, Boolean ifTrim) {
+		try {
+			String wStr = "";
+			for (String line : strList) {
+				if (ifTrim) {
+					line = line.trim();
+				}
+				wStr += (line + "\n");
+			}
+			Files.write(fPath, wStr.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	public static Boolean copyFile2Dir(File f, String DestDir) {
 		try {
 			File DestDirFile = new File(DestDir);
@@ -93,7 +110,7 @@ public class FileUtil {
 			String targetFilePath = DestDirFile.getAbsoluteFile() + "/" + f.getName();
 			FileUtils.copyFile(f, new File(targetFilePath));
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 			return false;
 		}
@@ -104,7 +121,7 @@ public class FileUtil {
 		try {
 			FileUtils.copyFile(srcFile, dstFile);
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 			return false;
 		}
@@ -206,7 +223,7 @@ public class FileUtil {
 			}
 			reader.close();
 		} catch (FileNotFoundException e) {
-			
+
 			System.out.println("filePath : " + filePath);
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -247,7 +264,7 @@ public class FileUtil {
 					fileList.add(new File(filepath));
 			});
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
 		return fileList;
@@ -264,7 +281,7 @@ public class FileUtil {
 					relPathList.add(filepath.replace(tarDir, ""));
 			});
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
 		return relPathList;
