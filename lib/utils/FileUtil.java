@@ -66,6 +66,10 @@ public class FileUtil {
 
 	public static Boolean writeStr2File(String wStr, String fPath) {
 		try {
+			Path parentDir = Paths.get(fPath).getParent();
+			if (!Files.exists(parentDir)) {
+				Files.createDirectories(parentDir);
+			}
 			Files.write(Paths.get(fPath), wStr.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,6 +80,9 @@ public class FileUtil {
 
 	public static Boolean writeStr2File(String wStr, Path fPath) {
 		try {
+			Path parentDir = fPath.getParent();
+			if (!Files.exists(parentDir))
+				Files.createDirectories(parentDir);
 			Files.write(fPath, wStr.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -86,6 +93,9 @@ public class FileUtil {
 
 	public static Boolean writeStrList2File(List<String> strList, Path fPath, Boolean ifTrim) {
 		try {
+			Path parentDir = fPath.getParent();
+			if (!Files.exists(parentDir))
+				Files.createDirectories(parentDir);
 			String wStr = "";
 			for (String line : strList) {
 				if (ifTrim) {
