@@ -38,7 +38,7 @@ public class ProcessUtil {
 	 * @param workDir
 	 * @return
 	 */
-	public static ProcessReporter executeCMD(String cmd, String[] envp, Path workDir) {
+	public static ProcessReporter executeCMD(String cmd, String[] envp, Path workDir, int expectedExitCode) {
 		ProcessReporter pr = new ProcessReporter();
 		pr.cmd = cmd;
 		try {
@@ -72,7 +72,7 @@ public class ProcessUtil {
 
 			proc.destroy();
 
-			if (pr.exitCode != 0) {
+			if (pr.exitCode != expectedExitCode) {
 				throw new Exception();
 			}
 		} catch (Exception e) {
