@@ -17,6 +17,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.io.FileUtils;
 
 public class FileUtil {
@@ -78,7 +80,7 @@ public class FileUtil {
 		return true;
 	}
 
-	public static Boolean writeStr2File(String wStr, Path fPath) {
+	public static Boolean writeStr2File(@Nonnull String wStr, @Nonnull Path fPath) {
 		try {
 			Path parentDir = fPath.getParent();
 			if (!Files.exists(parentDir))

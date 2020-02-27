@@ -83,4 +83,54 @@ public class ProcessUtil {
 		return pr;
 	}
 
+	/**
+	 * execute cmd
+	 * 
+	 * @param cmd
+	 * @param envp
+	 * @param workDir
+	 * @return
+	 */
+	public static ProcessReporter executeCMD(String cmd, String[] envp, Path workDir) {
+		ProcessReporter pr = new ProcessReporter();
+		pr.cmd = cmd;
+		try {
+			Runtime rt = Runtime.getRuntime();
+			Process proc = rt.exec(cmd, envp, workDir.toFile());
+
+			pr.exitCode = proc.waitFor();
+
+			// Read the output from the command
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			// System.out.println("Here is the standard output of the
+			// command:\n");
+			String out = "";
+			String s = null;
+			while ((s = stdInput.readLine()) != null) {
+				// System.out.println(s);
+				out += (s + "\n");
+			}
+			pr.out = out.trim();
+
+			// Read any errors from the attempted command
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+			// System.out.println("Here is the standard error of the command (if
+			// any):\n");
+			String err = "";
+			while ((s = stdError.readLine()) != null) {
+				// System.out.println(s);
+				err += (s + "\n");
+			}
+			pr.err = err.trim();
+
+			proc.destroy();
+
+		} catch (Exception e) {
+			TimeUtil.printCurTimewithMsg(pr.toString());
+			e.printStackTrace();
+		}
+
+		return pr;
+	}
+
 }
