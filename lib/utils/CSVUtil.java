@@ -1,6 +1,7 @@
 package javaToolkit.lib.utils;
 
 import java.io.FileWriter;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +46,21 @@ public class CSVUtil {
 		}
 	}
 
+	/**
+	 * if " (double quotation mark) exists in a cell, then the cell needs to be
+	 * replace("\"","\"\"") and add " before and after the cell
+	 * 
+	 * the implementation is cell="\""+cellString.replace("\"","\"\"")+"\""
+	 * 
+	 * @param strList
+	 * @param filePath
+	 */
 	public static void write2DArray2Csv(List<List<String>> strList, Path filePath) {
 		try {
+			if (filePath.toFile().exists()) {
+				filePath.toFile().delete();
+			}
+
 			FileWriter writer = null;
 			for (List<String> line : strList) {
 				String collect = line.stream().collect(Collectors.joining(","));

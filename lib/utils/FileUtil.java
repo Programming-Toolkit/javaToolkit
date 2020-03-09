@@ -131,6 +131,7 @@ public class FileUtil {
 
 	public static Boolean copyFile2File(File srcFile, File dstFile) {
 		try {
+			// dstfile will be overwrited if exist
 			FileUtils.copyFile(srcFile, dstFile);
 		} catch (IOException e) {
 

@@ -2,7 +2,6 @@ package javaToolkit.lib.utils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,8 +31,8 @@ public class GitUtil {
 
 	public static List<String> getAllCommitsSha(Path repoDir) {
 
-		String cmd = "timeout 60 git log --pretty=format:\"%H\"";
-
+		String cmd = "timeout 300 git --no-pager log --all --pretty=format:\"%H\"";
+		
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
 		if (pr.exitCode == 0) {
 			return Arrays.asList(pr.out.replace("\"", "").split("\n"));
@@ -48,7 +47,7 @@ public class GitUtil {
 
 	public static String getCommitMsg(Path repoDir, String com) {
 
-		String cmd = "timeout 60 git log --format=%B -n 1 " + com;
+		String cmd = "timeout 300 git log --format=%B -n 1 " + com;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
 		if (pr.exitCode == 0) {
@@ -64,7 +63,7 @@ public class GitUtil {
 
 	public static String getParentCommit(Path repoDir, String com) {
 
-		String cmd = "timeout 60 git log --pretty=%P -n 1 " + com;
+		String cmd = "timeout 300 git log --pretty=%P -n 1 " + com;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
 		if (pr.exitCode == 0) {
@@ -90,10 +89,10 @@ public class GitUtil {
 
 		String cmd = null;
 		if (diffMode != null) {
-			cmd = "timeout 60 git --git-dir " + repoDir.toString() + "/.git --work-tree " + repoDir.toString()
+			cmd = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree " + repoDir.toString()
 					+ " diff " + diffMode + " --unified=0 " + oldCom + " " + newCom;
 		} else {
-			cmd = "timeout 60 git --git-dir " + repoDir.toString() + "/.git --work-tree " + repoDir.toString()
+			cmd = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree " + repoDir.toString()
 					+ " diff --unified=0 " + oldCom + " " + newCom;
 		}
 
@@ -111,7 +110,7 @@ public class GitUtil {
 
 	public static List<String> getChangedFileList(Path repoDir, String com) {
 
-		String cmd = "timeout 30 git diff-tree --no-commit-id --name-only -r " + com;
+		String cmd = "timeout 300 git diff-tree --no-commit-id --name-only -r " + com;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
 		if (pr.exitCode == 0) {
@@ -130,25 +129,25 @@ public class GitUtil {
 		ProcessUtil.ProcessReporter pr = new ProcessUtil.ProcessReporter();
 
 		if (ifForce) {
-			String resetCMD = "timeout 60 git reset --hard";
+			String resetCMD = "timeout 300 git reset --hard";
 			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
 		}
 
 		String checkoutCMD = null;
 		if (com == null) { // checkout latest if null
-			checkoutCMD = "timeout 60 git checkout master";
+			checkoutCMD = "timeout 300 git checkout master";
 		} else {
-			checkoutCMD = "timeout 60 git checkout " + com;
+			checkoutCMD = "timeout 300 git checkout " + com;
 		}
 		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
 
 		if (pr.exitCode == 0) {
 			return true;
 		} else {
-			String cleanCMD = "timeout 60 git --git-dir " + repoDir.toString() + " /.git --work-tree "
+			String cleanCMD = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree "
 					+ repoDir.toString() + " clean -dfx .";
 			pr = ProcessUtil.executeCMD(cleanCMD, null, repoDir, 0);
-			String resetCMD = "timeout 60 git --git-dir " + repoDir.toString() + " /.git --work-tree "
+			String resetCMD = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree "
 					+ repoDir.toString() + " reset --hard";
 			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
 			pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
