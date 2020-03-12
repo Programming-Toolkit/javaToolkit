@@ -3,9 +3,30 @@ package javaToolkit.lib.utils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GitUtil {
+
+	public static void main(String[] args) {
+		Path repoDir = Paths.get("/data/bowen/data/PTBench-Data/data/2019/quarkusio#gizmo/raw_github");
+		Set<String> mergeSet = new HashSet<>();
+		Set<String> bugComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "bug"));
+		System.out.println("# bug coms " + String.valueOf(bugComs.size()));
+		mergeSet.addAll(bugComs);
+		Set<String> BugComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "Bug"));
+		System.out.println("# Bug coms " + String.valueOf(BugComs.size()));
+		mergeSet.addAll(BugComs);
+		Set<String> fixComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "fix"));
+		System.out.println("# fix coms " + String.valueOf(fixComs.size()));
+		mergeSet.addAll(fixComs);
+		Set<String> FixComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "Fix"));
+		System.out.println("# Fix coms " + String.valueOf(FixComs.size()));
+		mergeSet.addAll(FixComs);
+		System.out.println("# merge coms " + String.valueOf(mergeSet.size()));
+	}
 
 	public static Boolean clone(String repoName, String usrName, Path targetDir) {
 
@@ -32,9 +53,28 @@ public class GitUtil {
 	public static List<String> getAllCommitsSha(Path repoDir) {
 
 		String cmd = "timeout 300 git --no-pager log --all --pretty=format:\"%H\"";
-		
+
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
 		if (pr.exitCode == 0) {
+			return Arrays.asList(pr.out.replace("\"", "").split("\n"));
+		} else {
+			FileUtil.writeStr2File(pr.out, Paths.get(repoDir.toString(), "getAllCommitsSha_out.txt"));
+			FileUtil.writeStr2File(pr.err, Paths.get(repoDir.toString(), "getAllCommitsSha_err.txt"));
+			// System.out.println("cmd " + cmd + "\n");
+			// System.out.println("report \n" + pr.toString());
+			return null;
+		}
+	}
+
+	public static List<String> getComsWithSingleWordMatch(Path repoDir, String word) {
+
+		String cmd = "timeout 300 git --no-pager log --all --pretty=format:\"%H\" --grep=" + word.trim();
+
+		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
+		if (pr.exitCode == 0) {
+			if ("".equals(pr.out.trim())) {
+				return null;
+			}
 			return Arrays.asList(pr.out.replace("\"", "").split("\n"));
 		} else {
 			FileUtil.writeStr2File(pr.out, Paths.get(repoDir.toString(), "getAllCommitsSha_out.txt"));

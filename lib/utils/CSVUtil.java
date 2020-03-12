@@ -1,7 +1,6 @@
 package javaToolkit.lib.utils;
 
 import java.io.FileWriter;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
