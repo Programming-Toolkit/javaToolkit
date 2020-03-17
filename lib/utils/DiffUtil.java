@@ -3,8 +3,6 @@ package javaToolkit.lib.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jaxen.function.StartsWithFunction;
-
 public class DiffUtil {
 
 	public static List<Integer> getChangedLineNumListInOldVersion(String diffStr) {
