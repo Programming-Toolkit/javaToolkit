@@ -127,6 +127,22 @@ public class FileUtil {
 		return true;
 	}
 
+	public static Boolean copyFile2Dir(Path fPath, Path DestDir) {
+		try {
+			File DestDirFile = DestDir.toFile();
+			if (!DestDirFile.exists()) {
+				DestDirFile.mkdirs();
+			}
+			Path targetFilePath = Paths.get(DestDirFile.getAbsolutePath(), fPath.toFile().getName());
+			FileUtils.copyFile(fPath.toFile(), targetFilePath.toFile());
+		} catch (IOException e) {
+
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	public static Boolean copyFile2File(File srcFile, File dstFile) {
 		try {
 			// dstfile will be overwrited if exist

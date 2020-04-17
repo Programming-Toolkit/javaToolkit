@@ -45,8 +45,6 @@ public class ProcessUtil {
 			Runtime rt = Runtime.getRuntime();
 			Process proc = rt.exec(cmd, envp, workDir.toFile());
 
-			pr.exitCode = proc.waitFor();
-
 			// Read the output from the command
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			// System.out.println("Here is the standard output of the
@@ -69,6 +67,8 @@ public class ProcessUtil {
 				err += (s + "\n");
 			}
 			pr.err = err.trim();
+
+			pr.exitCode = proc.waitFor();
 
 			proc.destroy();
 
