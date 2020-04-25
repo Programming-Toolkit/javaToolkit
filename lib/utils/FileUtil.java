@@ -166,7 +166,7 @@ public class FileUtil {
 		return directoryToBeDeleted.delete();
 	}
 
-	public static void copyFolder(String srcDirStr, String destDirStr) {
+	public static void copyDirectory(String srcDirStr, String destDirStr) {
 		File source = new File(srcDirStr);
 		File dest = new File(destDirStr);
 		try {
