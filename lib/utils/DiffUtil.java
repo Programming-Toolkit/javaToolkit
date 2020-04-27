@@ -29,27 +29,26 @@ public class DiffUtil {
 		return changedLineNumList;
 	}
 
-	public static Integer getChangedLineCount(String diffStr, String mode) {
+	
+	/**
+	 * the mode can only be "add" or "delete"
+	 * @param diffStr
+	 * @param mode
+	 * @return
+	 */
+	public static int getChangedLineCount(String diffStr, String mode) {
 
 		int count = 0;
 		String symbol = null;
-		try {
-			if ("delete".equals(mode)) {
-				symbol = "-";
-			} else if ("add".equals(mode)) {
-				symbol = "+";
-			} else {
-				throw new Exception("Only have delete or add mode!");
+		if ("delete".equals(mode)) {
+			symbol = "-";
+		} else if ("add".equals(mode)) {
+			symbol = "+";
+		}
+		for (String line : diffStr.split("\n")) {
+			if (line.startsWith(symbol) && !line.startsWith("---") && !line.startsWith("+++")) {
+				count++;
 			}
-			for (String line : diffStr.split("\n")) {
-				if (line.startsWith(symbol) && !line.startsWith("---") && !line.startsWith("+++")) {
-					count++;
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			return null;
 		}
 		return count;
 	}

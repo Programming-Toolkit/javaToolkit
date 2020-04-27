@@ -10,24 +10,6 @@ import java.util.Set;
 
 public class GitUtil {
 
-	public static void main(String[] args) {
-		Path repoDir = Paths.get("/data/bowen/data/PTBench-Data/data/2019/quarkusio#gizmo/raw_github");
-		Set<String> mergeSet = new HashSet<>();
-		Set<String> bugComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "bug"));
-		System.out.println("# bug coms " + String.valueOf(bugComs.size()));
-		mergeSet.addAll(bugComs);
-		Set<String> BugComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "Bug"));
-		System.out.println("# Bug coms " + String.valueOf(BugComs.size()));
-		mergeSet.addAll(BugComs);
-		Set<String> fixComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "fix"));
-		System.out.println("# fix coms " + String.valueOf(fixComs.size()));
-		mergeSet.addAll(fixComs);
-		Set<String> FixComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "Fix"));
-		System.out.println("# Fix coms " + String.valueOf(FixComs.size()));
-		mergeSet.addAll(FixComs);
-		System.out.println("# merge coms " + String.valueOf(mergeSet.size()));
-	}
-
 	public static Boolean clone(String repoName, String usrName, Path targetDir) {
 
 		if (targetDir.toFile().exists()) {
@@ -79,6 +61,24 @@ public class GitUtil {
 		} else {
 			FileUtil.writeStr2File(pr.out, Paths.get(repoDir.toString(), "getAllCommitsSha_out.txt"));
 			FileUtil.writeStr2File(pr.err, Paths.get(repoDir.toString(), "getAllCommitsSha_err.txt"));
+			// System.out.println("cmd " + cmd + "\n");
+			// System.out.println("report \n" + pr.toString());
+			return null;
+		}
+	}
+
+	public static String getDiff4SingleFileNCommit(Path repoDir, String parCom, String curCom, String oldRelFilePath,
+			String newRelFilePath) {
+
+		String cmd = "timeout 300 git --no-pager diff --unified=0 " + parCom + ":" + oldRelFilePath + " " + curCom + ":"
+				+ newRelFilePath;
+
+		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
+		if (pr.exitCode == 0) {
+			return pr.out.trim();
+		} else {
+			FileUtil.writeStr2File(pr.out, Paths.get(repoDir.toString(), "getDiff4SingleFileNCommit.txt"));
+			FileUtil.writeStr2File(pr.err, Paths.get(repoDir.toString(), "getDiff4SingleFileNCommit.txt"));
 			// System.out.println("cmd " + cmd + "\n");
 			// System.out.println("report \n" + pr.toString());
 			return null;
