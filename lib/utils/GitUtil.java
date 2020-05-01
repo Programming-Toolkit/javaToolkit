@@ -17,7 +17,7 @@ public class GitUtil {
 		}
 		targetDir.toFile().mkdirs();
 
-		String cmd = "timeout 300 git clone https://github.com/" + repoName + "/" + usrName + " " + targetDir;
+		String cmd = "timeout 600 git clone https://github.com/" + repoName + "/" + usrName + " " + targetDir;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, targetDir, 0);
 		if (pr.exitCode == 0) {
@@ -169,13 +169,18 @@ public class GitUtil {
 		ProcessUtil.ProcessReporter pr = new ProcessUtil.ProcessReporter();
 
 		if (ifForce) {
-			String resetCMD = "timeout 300 git reset --hard";
+			String resetCMD = "timeout 600 git reset --hard";
 			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
+		}
+
+		String defaultBranchNameString = getDefaultBranch(repoDir);
+		if (defaultBranchNameString == null || defaultBranchNameString == "") {
+			defaultBranchNameString = "master";
 		}
 
 		String checkoutCMD = null;
 		if (com == null) { // checkout latest if null
-			checkoutCMD = "timeout 300 git checkout master";
+			checkoutCMD = "timeout 300 git checkout " + defaultBranchNameString;
 		} else {
 			checkoutCMD = "timeout 300 git checkout " + com;
 		}
@@ -197,6 +202,15 @@ public class GitUtil {
 				return false;
 			}
 		}
+	}
+
+	private static String getDefaultBranch(Path gitDirPath) {
+		// TODO Auto-generated method stub
+		String cmdString = "git symbolic-ref refs/remotes/origin/HEAD";
+		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmdString, null, gitDirPath, 0);
+		// output refs/remotes/origin/master
+		return pr.out.trim().split("refs/remotes/origin/")[1].trim();
+
 	}
 
 }
