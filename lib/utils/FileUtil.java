@@ -52,10 +52,10 @@ public class FileUtil {
 		return directories;
 	}
 
-	public static String readFile2Str(String fpath) {
+	public static String readFile2Str(Path fpath) {
 		String content = "";
 		try {
-			content = new String(Files.readAllBytes(Paths.get(fpath)));
+			content = new String(Files.readAllBytes(fpath));
 		} catch (IOException e) {
 			System.out.printf("%s not found!", fpath);
 			e.printStackTrace();

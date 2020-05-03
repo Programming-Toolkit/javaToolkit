@@ -77,6 +77,7 @@ public class ProcessUtil {
 			}
 		} catch (Exception e) {
 			TimeUtil.printCurTimewithMsg(pr.toString());
+			TimeUtil.printCurTimewithMsg("WorkingDir " + workDir.toString());
 			e.printStackTrace();
 		}
 

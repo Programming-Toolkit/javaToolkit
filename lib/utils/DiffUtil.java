@@ -29,9 +29,9 @@ public class DiffUtil {
 		return changedLineNumList;
 	}
 
-	
 	/**
 	 * the mode can only be "add" or "delete"
+	 * 
 	 * @param diffStr
 	 * @param mode
 	 * @return
@@ -47,7 +47,13 @@ public class DiffUtil {
 		}
 		for (String line : diffStr.split("\n")) {
 			if (line.startsWith(symbol) && !line.startsWith("---") && !line.startsWith("+++")) {
-				count++;
+				// if the line is comment
+				if (line.substring(1).trim().startsWith("*") || line.substring(1).trim().startsWith("/*")
+						|| line.substring(1).trim().startsWith("//")) {
+					continue;
+				} else {
+					count++;
+				}
 			}
 		}
 		return count;

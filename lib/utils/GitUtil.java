@@ -10,14 +10,14 @@ import java.util.Set;
 
 public class GitUtil {
 
-	public static Boolean clone(String repoName, String usrName, Path targetDir) {
+	public static Boolean clone(String usrName, String repoName, Path targetDir) {
 
 		if (targetDir.toFile().exists()) {
 			FileUtil.deleteDirectory(targetDir.toFile());
 		}
 		targetDir.toFile().mkdirs();
 
-		String cmd = "timeout 600 git clone https://github.com/" + repoName + "/" + usrName + " " + targetDir;
+		String cmd = "timeout 600 git clone https://github.com/" + usrName + "/" + repoName + " " + targetDir;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, targetDir, 0);
 		if (pr.exitCode == 0) {
@@ -174,9 +174,6 @@ public class GitUtil {
 		}
 
 		String defaultBranchNameString = getDefaultBranch(repoDir);
-		if (defaultBranchNameString == null || defaultBranchNameString == "") {
-			defaultBranchNameString = "master";
-		}
 
 		String checkoutCMD = null;
 		if (com == null) { // checkout latest if null
@@ -208,8 +205,13 @@ public class GitUtil {
 		// TODO Auto-generated method stub
 		String cmdString = "git symbolic-ref refs/remotes/origin/HEAD";
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmdString, null, gitDirPath, 0);
+
 		// output refs/remotes/origin/master
-		return pr.out.trim().split("refs/remotes/origin/")[1].trim();
+		if (pr.out.trim().contains("refs/remotes/origin/")) {
+			return pr.out.trim().split("refs/remotes/origin/")[1].trim();
+		} else {
+			return "master";
+		}
 
 	}
 
