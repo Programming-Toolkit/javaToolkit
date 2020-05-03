@@ -3,10 +3,7 @@ package javaToolkit.lib.utils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class GitUtil {
 
@@ -182,6 +179,17 @@ public class GitUtil {
 			checkoutCMD = "timeout 300 git checkout " + com;
 		}
 		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
+
+		if (pr.err.contains("fatal: index file smaller than expected")) {
+			Path lockFilePath = Paths.get(repoDir.toString() + "/.git/index.lock");
+			if (lockFilePath.toFile().exists()) {
+				lockFilePath.toFile().delete();
+			}
+			Path indexFilePath = Paths.get(repoDir.toString() + "/.git/index");
+			if (indexFilePath.toFile().exists()) {
+				indexFilePath.toFile().delete();
+			}
+		}
 
 		if (pr.exitCode == 0) {
 			return true;
