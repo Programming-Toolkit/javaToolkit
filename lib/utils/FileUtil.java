@@ -155,20 +155,20 @@ public class FileUtil {
 		return true;
 	}
 
-	public static boolean deleteDirectory(String dirPath) {
-		File directoryToBeDeleted = new File(dirPath);
+	public static boolean deleteDirectory(Path dirPath) {
+		File directoryToBeDeleted = dirPath.toFile();
 		File[] allContents = directoryToBeDeleted.listFiles();
 		if (allContents != null) {
 			for (File file : allContents) {
-				deleteDirectory(file.getAbsolutePath());
+				deleteDirectory(file.toPath());
 			}
 		}
 		return directoryToBeDeleted.delete();
 	}
 
-	public static void copyDirectory(String srcDirStr, String destDirStr) {
-		File source = new File(srcDirStr);
-		File dest = new File(destDirStr);
+	public static void copyDirectory(Path srcDirPath, Path destDirPath) {
+		File source = srcDirPath.toFile();
+		File dest = destDirPath.toFile();
 		try {
 			FileUtils.copyDirectory(source, dest);
 		} catch (IOException e) {
@@ -263,7 +263,7 @@ public class FileUtil {
 	public static void createFolder(String dirStr, Boolean deleteIfExist) {
 		File dir = new File(dirStr);
 		if (deleteIfExist && dir.exists()) {
-			deleteDirectory(dir.getAbsolutePath());
+			deleteDirectory(dir.toPath());
 			dir.mkdirs();
 		} else if (!dir.exists()) {
 			dir.mkdirs();
@@ -280,11 +280,11 @@ public class FileUtil {
 		return directoryToBeDeleted.delete();
 	}
 
-	public static List<File> findFilePathofSpecifcTypeRecusive(String tarDir, String extension) {
+	public static List<File> findFilePathofSpecifcTypeRecusive(Path tarDir, String extension) {
 
 		List<File> fileList = new ArrayList<File>();
 		try {
-			Files.walk(Paths.get(tarDir)).filter(Files::isRegularFile).forEach((f) -> {
+			Files.walk(tarDir).filter(Files::isRegularFile).forEach((f) -> {
 				String filepath = f.toString();
 				if (filepath.endsWith(extension))
 					// System.out.println(file + " found!");

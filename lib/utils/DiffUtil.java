@@ -53,12 +53,10 @@ public class DiffUtil {
 		return count;
 	}
 
-	public static List<Integer> getChangedLineNumListInNewVersion(String diffFilePath) {
-
+	public static List<Integer> getChangedLineNumListInNewVersion(String diffStr) {
 		List<Integer> changedLineNumList = new ArrayList<>();
 		try {
-			List<String> diffFileStrList = FileUtil.readFileToLineList(diffFilePath);
-			for (String line : diffFileStrList) {
+			for (String line : diffStr.split("\n")) {
 				if (line.startsWith("@@")) {
 					for (String tmp : line.split(" ")) {
 						if (tmp.trim().startsWith("+")) {
@@ -73,7 +71,6 @@ public class DiffUtil {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.out.println(diffFilePath);
 			e.printStackTrace();
 		}
 		return changedLineNumList;
