@@ -1,5 +1,7 @@
 package javaToolkit.lib.utils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,10 +84,11 @@ public class DiffUtil {
 		return changedLineNumList;
 	}
 
-	public static List<String> getModifiedFileList(String diffFilePath) {
+	public static List<String> getModifiedFileList(String diffFilePathString) {
 		/**
 		 * can to be further improved in future
 		 */
+		Path diffFilePath = Paths.get(diffFilePathString);
 		List<String> modifiedFileRelPathList = new ArrayList<String>();
 		for (String line : FileUtil.readFileToLineList(diffFilePath)) {
 			if (line.startsWith("diff --git ")) {

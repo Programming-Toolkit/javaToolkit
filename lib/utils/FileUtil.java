@@ -235,14 +235,14 @@ public class FileUtil {
 	 * @param filePath
 	 * @return
 	 */
-	public static List<String> readFileToLineList(String filePath) {
+	public static List<String> readFileToLineList(Path filePath) {
 		ArrayList<String> strList = new ArrayList<String>();
 		try {
-			if (!new File(filePath).exists()) {
+			if (!filePath.toFile().exists()) {
 				System.out.println("File not exists! " + filePath);
 				return null;
 			}
-			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			BufferedReader reader = new BufferedReader(new FileReader(filePath.toString()));
 			String line = reader.readLine();
 			while (line != null) {
 				strList.add(line);
