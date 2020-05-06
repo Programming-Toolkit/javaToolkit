@@ -1,16 +1,13 @@
 package javaToolkit.lib.utils;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -173,29 +170,6 @@ public class FileUtil {
 			FileUtils.copyDirectory(source, dest);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	public static void writeStringToFile(String filePath, String dataStr) {
-		BufferedWriter bufferedWriter = null;
-		try {
-			File file = new File(filePath);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			Writer writer = new FileWriter(file);
-			bufferedWriter = new BufferedWriter(writer);
-			bufferedWriter.write(dataStr);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (bufferedWriter != null)
-					bufferedWriter.close();
-			} catch (Exception e) {
-				System.out.println("Write file error!");
-				e.printStackTrace();
-			}
 		}
 	}
 
