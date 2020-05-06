@@ -161,7 +161,7 @@ public class GitUtil {
 		}
 	}
 
-	public static Boolean checkout(Path repoDir, String com, Boolean ifForce) {
+	public static Boolean checkoutDefaultBranch(Path repoDir, Boolean ifForce) {
 
 		ProcessUtil.ProcessReporter pr = new ProcessUtil.ProcessReporter();
 
@@ -173,11 +173,52 @@ public class GitUtil {
 		String defaultBranchNameString = getDefaultBranch(repoDir);
 
 		String checkoutCMD = null;
-		if (com == null) { // checkout latest if null
-			checkoutCMD = "timeout 300 git checkout " + defaultBranchNameString;
-		} else {
-			checkoutCMD = "timeout 300 git checkout " + com;
+		checkoutCMD = "timeout 300 git checkout " + defaultBranchNameString;
+
+		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
+
+		if (pr.err.contains("fatal: index file smaller than expected")) {
+			Path lockFilePath = Paths.get(repoDir.toString() + "/.git/index.lock");
+			if (lockFilePath.toFile().exists()) {
+				lockFilePath.toFile().delete();
+			}
+			Path indexFilePath = Paths.get(repoDir.toString() + "/.git/index");
+			if (indexFilePath.toFile().exists()) {
+				indexFilePath.toFile().delete();
+			}
 		}
+
+		if (pr.exitCode == 0) {
+			return true;
+		} else {
+			String cleanCMD = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree "
+					+ repoDir.toString() + " clean -dfx .";
+			pr = ProcessUtil.executeCMD(cleanCMD, null, repoDir, 0);
+			String resetCMD = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree "
+					+ repoDir.toString() + " reset --hard";
+			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
+			pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
+			if (pr.exitCode == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	public static Boolean checkoutCommit(Path repoDir, String com, Boolean ifForce) {
+
+		ProcessUtil.ProcessReporter pr = new ProcessUtil.ProcessReporter();
+
+		if (ifForce) {
+			String resetCMD = "timeout 600 git reset --hard";
+			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
+		}
+
+		String defaultBranchNameString = getDefaultBranch(repoDir);
+
+		String checkoutCMD = null;
+		checkoutCMD = "timeout 300 git checkout " + com;
 		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
 
 		if (pr.err.contains("fatal: index file smaller than expected")) {
