@@ -1,5 +1,7 @@
 package javaToolkit.lib.utils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,27 +31,32 @@ public class DiffUtil {
 		return changedLineNumList;
 	}
 
-	public static Integer getChangedLineCount(String diffStr, String mode) {
+	/**
+	 * the mode can only be "add" or "delete"
+	 * 
+	 * @param diffStr
+	 * @param mode
+	 * @return
+	 */
+	public static int getChangedLineCount(String diffStr, String mode) {
 
 		int count = 0;
 		String symbol = null;
-		try {
-			if ("delete".equals(mode)) {
-				symbol = "-";
-			} else if ("add".equals(mode)) {
-				symbol = "+";
-			} else {
-				throw new Exception("Only have delete or add mode!");
-			}
-			for (String line : diffStr.split("\n")) {
-				if (line.startsWith(symbol) && !line.startsWith("---") && !line.startsWith("+++")) {
+		if ("delete".equals(mode)) {
+			symbol = "-";
+		} else if ("add".equals(mode)) {
+			symbol = "+";
+		}
+		for (String line : diffStr.split("\n")) {
+			if (line.startsWith(symbol) && !line.startsWith("---") && !line.startsWith("+++")) {
+				// if the line is comment
+				if (line.substring(1).trim().startsWith("*") || line.substring(1).trim().startsWith("/*")
+						|| line.substring(1).trim().startsWith("//")) {
+					continue;
+				} else {
 					count++;
 				}
 			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			return null;
 		}
 		return count;
 	}
@@ -77,10 +84,11 @@ public class DiffUtil {
 		return changedLineNumList;
 	}
 
-	public static List<String> getModifiedFileList(String diffFilePath) {
+	public static List<String> getModifiedFileList(String diffFilePathString) {
 		/**
 		 * can to be further improved in future
 		 */
+		Path diffFilePath = Paths.get(diffFilePathString);
 		List<String> modifiedFileRelPathList = new ArrayList<String>();
 		for (String line : FileUtil.readFileToLineList(diffFilePath)) {
 			if (line.startsWith("diff --git ")) {
