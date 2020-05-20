@@ -10,14 +10,14 @@ public class SRCUtil {
 		List<String> srcStrList = FileUtil.readFileToLineList(Paths.get(oriSRCPath));
 
 		Boolean ifchanged = false;
-		String wrtStr = "";
+		String wrtStr = "package " + newPackName + ";";
 		for (int i = 0; i < srcStrList.size(); i++) {
 			String line = srcStrList.get(i);
 			if (line.trim().startsWith("package ") && !ifchanged) {
-				line = "package " + newPackName + ";";
 				ifchanged = true;
+			} else {
+				wrtStr += (line + "\n");
 			}
-			wrtStr += (line + "\n");
 		}
 
 		FileUtil.writeStr2File(wrtStr, dstSRCPath);
