@@ -215,8 +215,6 @@ public class GitUtil {
 			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
 		}
 
-		String defaultBranchNameString = getDefaultBranch(repoDir);
-
 		String checkoutCMD = null;
 		checkoutCMD = "timeout 300 git checkout " + com;
 		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
@@ -252,7 +250,7 @@ public class GitUtil {
 
 	private static String getDefaultBranch(Path gitDirPath) {
 		// TODO Auto-generated method stub
-		String cmdString = "git symbolic-ref refs/remotes/origin/HEAD";
+		String cmdString = "timeout 60 git symbolic-ref refs/remotes/origin/HEAD";
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmdString, null, gitDirPath, 0);
 
 		// output refs/remotes/origin/master
