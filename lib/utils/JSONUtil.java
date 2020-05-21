@@ -13,39 +13,37 @@ import org.json.simple.parser.ParseException;
 
 public class JSONUtil {
 
-    public static JSONObject parseJSONFromFile(String jsonFpath) {
-        FileReader reader;
-        JSONObject object = null;
-        try {
-            reader = new FileReader(jsonFpath);
-            JSONParser jsonParser = new JSONParser();
+	public static JSONObject parseJSONFromFile(String jsonFpath) {
+		FileReader reader;
+		JSONObject object = null;
+		try {
+			reader = new FileReader(jsonFpath);
+			JSONParser jsonParser = new JSONParser();
 
-            object = (JSONObject) jsonParser.parse(reader);
-        } catch (IOException | ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+			object = (JSONObject) jsonParser.parse(reader);
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        return object;
+		return object;
 
-    }
+	}
 
+	public static void writeMapAsJson(Map<String, Integer> map, String jsonFilePath) {
+		Map<String, String> newMap = new HashMap<String, String>();
+		for (String key : map.keySet()) {
+			newMap.put(key, String.valueOf(map.get(key)));
+		}
 
-    public static void writeMapAsJson(Map<String, Integer> map, String jsonFilePath) {
-        Map<String, String> newMap = new HashMap<String, String>();
-        for (String key : map.keySet()) {
-            newMap.put(key, String.valueOf(map.get(key)));
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(newMap);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        FileUtil.writeStr2File(json, jsonFilePath);
-    }
-
+		ObjectMapper mapper = new ObjectMapper();
+		String json = null;
+		try {
+			json = mapper.writeValueAsString(newMap);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		FileUtil.writeStr2File(json, jsonFilePath);
+	}
 
 }
