@@ -1,9 +1,10 @@
 package javaToolkit.lib.utils;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DiffUtil {
 
@@ -84,25 +85,20 @@ public class DiffUtil {
 		return changedLineNumList;
 	}
 
-	public static List<String> getModifiedFileList(String diffFilePathString) {
-		/**
-		 * can to be further improved in future
-		 */
-		Path diffFilePath = Paths.get(diffFilePathString);
-		List<String> modifiedFileRelPathList = new ArrayList<String>();
+	public static List<Map<String, String>> getModifiedFileList(Path diffFilePath) {
+		List<Map<String, String>> modifiedFileRelPathList = new ArrayList<Map<String, String>>();
 		for (String line : FileUtil.readFileToLineList(diffFilePath)) {
 			if (line.startsWith("diff --git ")) {
 				// Heuristic
-				String fileRelPath = line.replace("diff --git ", "").split(" ")[0].replaceFirst("a/", "").trim();
-				modifiedFileRelPathList.add(fileRelPath);
+				String oldFileRelPath = line.replace("diff --git ", "").split(" ")[0].replaceFirst("a/", "").trim();
+				String newFileRelPath = line.replace("diff --git ", "").split(" ")[1].replaceFirst("b/", "").trim();
+				Map<String, String> oldNnewMap = new HashMap<String, String>();
+				oldNnewMap.put("old", oldFileRelPath);
+				oldNnewMap.put("new", newFileRelPath);
+				modifiedFileRelPathList.add(oldNnewMap);
 			}
 		}
 		return modifiedFileRelPathList;
-	}
-
-	public static void main(String[] args) {
-		String diffFilePath = "/media/sf__3_fix_groups/RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE/delete redundent null check/27769/diff.txt";
-		getModifiedFileList(diffFilePath);
 	}
 
 }

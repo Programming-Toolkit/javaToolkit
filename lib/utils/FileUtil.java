@@ -2,12 +2,10 @@ package javaToolkit.lib.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -171,36 +169,6 @@ public class FileUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static String readStringFromFile(String filePath) {
-		try {
-			File file = new File(filePath);
-			if (file.isFile() && file.exists()) {
-				InputStreamReader read = new InputStreamReader(new FileInputStream(file));
-				BufferedReader bufferedReader = new BufferedReader(read);
-				StringBuilder stringBuilder = new StringBuilder();
-				String line = null;
-				String ls = System.getProperty("line.separator");
-				while ((line = bufferedReader.readLine()) != null) {
-					stringBuilder.append(line);
-					stringBuilder.append(ls);
-				}
-
-				// delete the last new line separator
-				stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-				bufferedReader.close();
-
-				String content = stringBuilder.toString();
-				return content;
-			} else {
-				System.out.printf("File not found! %s\n", filePath);
-			}
-		} catch (Exception e) {
-			System.out.println("Read file error!");
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	/**
