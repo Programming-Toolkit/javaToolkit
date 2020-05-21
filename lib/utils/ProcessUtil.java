@@ -45,8 +45,6 @@ public class ProcessUtil {
 			Runtime rt = Runtime.getRuntime();
 			Process proc = rt.exec(cmd, envp, workDir.toFile());
 
-			pr.exitCode = proc.waitFor();
-
 			// Read the output from the command
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			// System.out.println("Here is the standard output of the
@@ -70,6 +68,8 @@ public class ProcessUtil {
 			}
 			pr.err = err.trim();
 
+			pr.exitCode = proc.waitFor();
+
 			proc.destroy();
 
 			if (pr.exitCode != expectedExitCode) {
@@ -77,6 +77,7 @@ public class ProcessUtil {
 			}
 		} catch (Exception e) {
 			TimeUtil.printCurTimewithMsg(pr.toString());
+			TimeUtil.printCurTimewithMsg("WorkingDir " + workDir.toString());
 			e.printStackTrace();
 		}
 

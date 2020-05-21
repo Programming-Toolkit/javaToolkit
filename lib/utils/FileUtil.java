@@ -1,16 +1,13 @@
 package javaToolkit.lib.utils;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,10 +49,10 @@ public class FileUtil {
 		return directories;
 	}
 
-	public static String readFile2Str(String fpath) {
+	public static String readFile2Str(Path fpath) {
 		String content = "";
 		try {
-			content = new String(Files.readAllBytes(Paths.get(fpath)));
+			content = new String(Files.readAllBytes(fpath));
 		} catch (IOException e) {
 			System.out.printf("%s not found!", fpath);
 			e.printStackTrace();
@@ -127,6 +124,22 @@ public class FileUtil {
 		return true;
 	}
 
+	public static Boolean copyFile2Dir(Path fPath, Path DestDir) {
+		try {
+			File DestDirFile = DestDir.toFile();
+			if (!DestDirFile.exists()) {
+				DestDirFile.mkdirs();
+			}
+			Path targetFilePath = Paths.get(DestDirFile.getAbsolutePath(), fPath.toFile().getName());
+			FileUtils.copyFile(fPath.toFile(), targetFilePath.toFile());
+		} catch (IOException e) {
+
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	public static Boolean copyFile2File(File srcFile, File dstFile) {
 		try {
 			// dstfile will be overwrited if exist
@@ -139,47 +152,24 @@ public class FileUtil {
 		return true;
 	}
 
-	public static boolean deleteDirectory(String dirPath) {
-		File directoryToBeDeleted = new File(dirPath);
+	public static boolean deleteDirectory(Path dirPath) {
+		File directoryToBeDeleted = dirPath.toFile();
 		File[] allContents = directoryToBeDeleted.listFiles();
 		if (allContents != null) {
 			for (File file : allContents) {
-				deleteDirectory(file.getAbsolutePath());
+				deleteDirectory(file.toPath());
 			}
 		}
 		return directoryToBeDeleted.delete();
 	}
 
-	public static void copyFolder(String srcDirStr, String destDirStr) {
-		File source = new File(srcDirStr);
-		File dest = new File(destDirStr);
+	public static void copyDirectory(Path srcDirPath, Path destDirPath) {
+		File source = srcDirPath.toFile();
+		File dest = destDirPath.toFile();
 		try {
 			FileUtils.copyDirectory(source, dest);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	public static void writeStringToFile(String filePath, String dataStr) {
-		BufferedWriter bufferedWriter = null;
-		try {
-			File file = new File(filePath);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			Writer writer = new FileWriter(file);
-			bufferedWriter = new BufferedWriter(writer);
-			bufferedWriter.write(dataStr);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (bufferedWriter != null)
-					bufferedWriter.close();
-			} catch (Exception e) {
-				System.out.println("Write file error!");
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -219,14 +209,14 @@ public class FileUtil {
 	 * @param filePath
 	 * @return
 	 */
-	public static List<String> readFileToLineList(String filePath) {
+	public static List<String> readFileToLineList(Path filePath) {
 		ArrayList<String> strList = new ArrayList<String>();
 		try {
-			if (!new File(filePath).exists()) {
+			if (!filePath.toFile().exists()) {
 				System.out.println("File not exists! " + filePath);
 				return null;
 			}
-			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			BufferedReader reader = new BufferedReader(new FileReader(filePath.toString()));
 			String line = reader.readLine();
 			while (line != null) {
 				strList.add(line);
@@ -247,7 +237,7 @@ public class FileUtil {
 	public static void createFolder(String dirStr, Boolean deleteIfExist) {
 		File dir = new File(dirStr);
 		if (deleteIfExist && dir.exists()) {
-			deleteDirectory(dir.getAbsolutePath());
+			deleteDirectory(dir.toPath());
 			dir.mkdirs();
 		} else if (!dir.exists()) {
 			dir.mkdirs();
@@ -264,11 +254,11 @@ public class FileUtil {
 		return directoryToBeDeleted.delete();
 	}
 
-	public static List<File> findFilePathofSpecifcTypeRecusive(String tarDir, String extension) {
+	public static List<File> findFilePathofSpecifcTypeRecusive(Path tarDir, String extension) {
 
 		List<File> fileList = new ArrayList<File>();
 		try {
-			Files.walk(Paths.get(tarDir)).filter(Files::isRegularFile).forEach((f) -> {
+			Files.walk(tarDir).filter(Files::isRegularFile).forEach((f) -> {
 				String filepath = f.toString();
 				if (filepath.endsWith(extension))
 					// System.out.println(file + " found!");

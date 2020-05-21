@@ -3,39 +3,18 @@ package javaToolkit.lib.utils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class GitUtil {
 
-	public static void main(String[] args) {
-		Path repoDir = Paths.get("/data/bowen/data/PTBench-Data/data/2019/quarkusio#gizmo/raw_github");
-		Set<String> mergeSet = new HashSet<>();
-		Set<String> bugComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "bug"));
-		System.out.println("# bug coms " + String.valueOf(bugComs.size()));
-		mergeSet.addAll(bugComs);
-		Set<String> BugComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "Bug"));
-		System.out.println("# Bug coms " + String.valueOf(BugComs.size()));
-		mergeSet.addAll(BugComs);
-		Set<String> fixComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "fix"));
-		System.out.println("# fix coms " + String.valueOf(fixComs.size()));
-		mergeSet.addAll(fixComs);
-		Set<String> FixComs = new HashSet<String>(getComsWithSingleWordMatch(repoDir, "Fix"));
-		System.out.println("# Fix coms " + String.valueOf(FixComs.size()));
-		mergeSet.addAll(FixComs);
-		System.out.println("# merge coms " + String.valueOf(mergeSet.size()));
-	}
-
-	public static Boolean clone(String repoName, String usrName, Path targetDir) {
+	public static Boolean clone(String usrName, String repoName, Path targetDir) {
 
 		if (targetDir.toFile().exists()) {
 			FileUtil.deleteDirectory(targetDir.toFile());
 		}
 		targetDir.toFile().mkdirs();
 
-		String cmd = "timeout 300 git clone https://github.com/" + repoName + "/" + usrName + " " + targetDir;
+		String cmd = "timeout 600 git clone https://github.com/" + usrName + "/" + repoName + " " + targetDir;
 
 		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, targetDir, 0);
 		if (pr.exitCode == 0) {
@@ -79,6 +58,24 @@ public class GitUtil {
 		} else {
 			FileUtil.writeStr2File(pr.out, Paths.get(repoDir.toString(), "getAllCommitsSha_out.txt"));
 			FileUtil.writeStr2File(pr.err, Paths.get(repoDir.toString(), "getAllCommitsSha_err.txt"));
+			// System.out.println("cmd " + cmd + "\n");
+			// System.out.println("report \n" + pr.toString());
+			return null;
+		}
+	}
+
+	public static String getDiff4SingleFileNCommit(Path repoDir, String parCom, String curCom, String oldRelFilePath,
+			String newRelFilePath) {
+
+		String cmd = "timeout 300 git --no-pager diff --unified=0 " + parCom + ":" + oldRelFilePath + " " + curCom + ":"
+				+ newRelFilePath;
+
+		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmd, null, repoDir, 0);
+		if (pr.exitCode == 0) {
+			return pr.out.trim();
+		} else {
+			FileUtil.writeStr2File(pr.out, Paths.get(repoDir.toString(), "getDiff4SingleFileNCommit.txt"));
+			FileUtil.writeStr2File(pr.err, Paths.get(repoDir.toString(), "getDiff4SingleFileNCommit.txt"));
 			// System.out.println("cmd " + cmd + "\n");
 			// System.out.println("report \n" + pr.toString());
 			return null;
@@ -164,22 +161,32 @@ public class GitUtil {
 		}
 	}
 
-	public static Boolean checkout(Path repoDir, String com, Boolean ifForce) {
+	public static Boolean checkoutDefaultBranch(Path repoDir, Boolean ifForce) {
 
 		ProcessUtil.ProcessReporter pr = new ProcessUtil.ProcessReporter();
 
 		if (ifForce) {
-			String resetCMD = "timeout 300 git reset --hard";
+			String resetCMD = "timeout 600 git reset --hard";
 			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
 		}
 
+		String defaultBranchNameString = getDefaultBranch(repoDir);
+
 		String checkoutCMD = null;
-		if (com == null) { // checkout latest if null
-			checkoutCMD = "timeout 300 git checkout master";
-		} else {
-			checkoutCMD = "timeout 300 git checkout " + com;
-		}
+		checkoutCMD = "timeout 300 git checkout " + defaultBranchNameString;
+
 		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
+
+		if (pr.err.contains("fatal: index file smaller than expected")) {
+			Path lockFilePath = Paths.get(repoDir.toString() + "/.git/index.lock");
+			if (lockFilePath.toFile().exists()) {
+				lockFilePath.toFile().delete();
+			}
+			Path indexFilePath = Paths.get(repoDir.toString() + "/.git/index");
+			if (indexFilePath.toFile().exists()) {
+				indexFilePath.toFile().delete();
+			}
+		}
 
 		if (pr.exitCode == 0) {
 			return true;
@@ -197,6 +204,62 @@ public class GitUtil {
 				return false;
 			}
 		}
+	}
+
+	public static Boolean checkoutCommit(Path repoDir, String com, Boolean ifForce) {
+
+		ProcessUtil.ProcessReporter pr = new ProcessUtil.ProcessReporter();
+
+		if (ifForce) {
+			String resetCMD = "timeout 600 git reset --hard";
+			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
+		}
+
+		String checkoutCMD = null;
+		checkoutCMD = "timeout 300 git checkout " + com;
+		pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
+
+		if (pr.err.contains("fatal: index file smaller than expected")) {
+			Path lockFilePath = Paths.get(repoDir.toString() + "/.git/index.lock");
+			if (lockFilePath.toFile().exists()) {
+				lockFilePath.toFile().delete();
+			}
+			Path indexFilePath = Paths.get(repoDir.toString() + "/.git/index");
+			if (indexFilePath.toFile().exists()) {
+				indexFilePath.toFile().delete();
+			}
+		}
+
+		if (pr.exitCode == 0) {
+			return true;
+		} else {
+			String cleanCMD = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree "
+					+ repoDir.toString() + " clean -dfx .";
+			pr = ProcessUtil.executeCMD(cleanCMD, null, repoDir, 0);
+			String resetCMD = "timeout 300 git --git-dir " + repoDir.toString() + "/.git --work-tree "
+					+ repoDir.toString() + " reset --hard";
+			pr = ProcessUtil.executeCMD(resetCMD, null, repoDir, 0);
+			pr = ProcessUtil.executeCMD(checkoutCMD, null, repoDir, 0);
+			if (pr.exitCode == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	private static String getDefaultBranch(Path gitDirPath) {
+		// TODO Auto-generated method stub
+		String cmdString = "timeout 60 git symbolic-ref refs/remotes/origin/HEAD";
+		ProcessUtil.ProcessReporter pr = ProcessUtil.executeCMD(cmdString, null, gitDirPath, 0);
+
+		// output refs/remotes/origin/master
+		if (pr.out.trim().contains("refs/remotes/origin/")) {
+			return pr.out.trim().split("refs/remotes/origin/")[1].trim();
+		} else {
+			return "master";
+		}
+
 	}
 
 }

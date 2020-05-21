@@ -1,11 +1,31 @@
 package javaToolkit.lib.utils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class SRCUtil {
 
 	public static void changePackage(String oriSRCPath, String dstSRCPath, String newPackName) {
-		List<String> srcStrList = FileUtil.readFileToLineList(oriSRCPath);
+		List<String> srcStrList = FileUtil.readFileToLineList(Paths.get(oriSRCPath));
+
+		Boolean ifchanged = false;
+		String wrtStr = "package " + newPackName + ";";
+		for (int i = 0; i < srcStrList.size(); i++) {
+			String line = srcStrList.get(i);
+			if (line.trim().startsWith("package ") && !ifchanged) {
+				ifchanged = true;
+			} else {
+				wrtStr += (line + "\n");
+			}
+		}
+
+		FileUtil.writeStr2File(wrtStr, dstSRCPath);
+
+	}
+
+	public static void changePackage(Path srcPath, String newPackName) {
+		List<String> srcStrList = FileUtil.readFileToLineList(srcPath);
 
 		Boolean ifchanged = false;
 		String wrtStr = "";
@@ -18,7 +38,7 @@ public class SRCUtil {
 			wrtStr += (line + "\n");
 		}
 
-		FileUtil.writeStringToFile(dstSRCPath, wrtStr);
+		FileUtil.writeStr2File(wrtStr, srcPath);
 
 	}
 
