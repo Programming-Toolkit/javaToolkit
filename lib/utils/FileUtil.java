@@ -18,9 +18,9 @@ import org.apache.commons.io.FileUtils;
 
 public class FileUtil {
 
-	public static String getFileContent(String filePath) throws IOException {
+	public static String getFileContent(Path filePath) throws IOException {
 
-		BufferedReader br = new BufferedReader(new FileReader(filePath));
+		BufferedReader br = new BufferedReader(new FileReader(filePath.toString()));
 		StringBuilder sb = new StringBuilder();
 		String line = br.readLine();
 		while (line != null) {
