@@ -8,11 +8,14 @@ import java.util.stream.Collectors;
 
 public class CSVUtil {
 
-	public static void writeLine2Csv(List<String> strList, Path filePath) {
+	public static void writeLine2Csv(List<String> strList, Path filePath, Boolean ifAppendNewLine) {
 		try {
 			FileWriter writer = new FileWriter(filePath.toString());
 
 			String collect = strList.stream().collect(Collectors.joining(","));
+			if (ifAppendNewLine) {
+				collect += "\n";
+			}
 			System.out.println(collect);
 
 			writer.write(collect);
@@ -23,9 +26,12 @@ public class CSVUtil {
 		}
 	}
 
-	public static void appendLine2Csv(List<String> strList, Path filePath) {
+	public static void appendLine2Csv(List<String> strList, Path filePath, Boolean ifAppendNewLine) {
 		try {
 			String collect = strList.stream().collect(Collectors.joining(","));
+			if (ifAppendNewLine) {
+				collect += "\n";
+			}
 			// System.out.println(collect);
 
 			// pass true for appending
@@ -85,10 +91,10 @@ public class CSVUtil {
 	 * read csv line by line and parse single line to this function code example
 	 * String csvFile = "/Users/mkyong/csv/country2.csv";
 	 * 
-	 * Scanner scanner = new Scanner(new File(csvFile)); while
-	 * (scanner.hasNext()) { List<String> line = parseLine(scanner.nextLine());
-	 * System.out.println("Country [id= " + line.get(0) + ", code= " +
-	 * line.get(1) + " , name=" + line.get(2) + "]"); } scanner.close();
+	 * Scanner scanner = new Scanner(new File(csvFile)); while (scanner.hasNext()) {
+	 * List<String> line = parseLine(scanner.nextLine());
+	 * System.out.println("Country [id= " + line.get(0) + ", code= " + line.get(1) +
+	 * " , name=" + line.get(2) + "]"); } scanner.close();
 	 * 
 	 * @param cvsLine
 	 * @param separator

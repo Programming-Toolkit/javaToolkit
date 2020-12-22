@@ -29,4 +29,10 @@ Programming toolkit to avoid reinventing the wheel
     	<artifactId>gson</artifactId>
     	<version>2.8.6</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.core -->
+	<dependency>
+		<groupId>org.eclipse.jdt</groupId>
+		<artifactId>org.eclipse.jdt.core</artifactId>
+		<version>3.24.0</version>
+	</dependency>
 ```
