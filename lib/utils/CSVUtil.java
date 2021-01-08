@@ -1,8 +1,12 @@
 package javaToolkit.lib.utils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +20,7 @@ public class CSVUtil {
 			if (ifAppendNewLine) {
 				collect += "\n";
 			}
-			System.out.println(collect);
+			// System.out.println(collect);
 
 			writer.write(collect);
 			writer.close();
@@ -175,6 +179,36 @@ public class CSVUtil {
 		result.add(curVal.toString());
 
 		return result;
+	}
+
+	public static List<List<String>> loadCSVTo2DList(Path filePath, Boolean ifWithHeader) {
+		String line = "";
+		String cvsSplitBy = ",";
+		List<List<String>> data = new ArrayList<>();
+
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath.toString()))) {
+
+			// skip header
+			line = br.readLine();
+			while ((line = br.readLine()) != null) {
+
+				// use comma as separator
+				String[] row = line.split(cvsSplitBy);
+				List<String> strings = Arrays.asList(row);
+				data.add(strings);
+
+			}
+
+		} catch (IOException e) {
+			System.out.println(line);
+			e.printStackTrace();
+			System.exit(0);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println(line);
+			e.printStackTrace();
+			System.exit(0);
+		}
+		return data;
 	}
 
 }
