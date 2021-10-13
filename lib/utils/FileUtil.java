@@ -256,6 +256,25 @@ public class FileUtil {
 		return relPathList;
 	}
 
+	/**
+	 * https://stackoverflow.com/a/41713403
+	 * @param rootDir
+	 */
+	public static void deleteAllEmptyFoldersRecursively(Path rootDir) {
+		File[] listofFiles = rootDir.toFile().listFiles();
+		if (listofFiles.length == 0) {
+//			System.out.println("Folder Name :: " + rootDir.toFile().getAbsolutePath() + " is deleted.");
+			rootDir.toFile().delete();
+		} else {
+			for (int j = 0; j < listofFiles.length; j++) {
+				File file = listofFiles[j];
+				if (file.isDirectory()) {
+					deleteAllEmptyFoldersRecursively(file.toPath());
+				}
+			}
+		}
+	}
+
 	public static void main(String[] args) {
 		// test
 		String dirPath = "/data/bowen/data/Transformation4J/FBMining/_4_fix_groups/RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE/correct the null check object/18601/buggy/";
